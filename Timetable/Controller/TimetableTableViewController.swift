@@ -8,9 +8,16 @@
 
 import UIKit
 
+private let reuseIdentifier = "Cell"
+
+enum TransportType : Int {
+	case ARRIVAL
+	case DEPARTURE
+}
+
 class TimetableTableViewController: UITableViewController {
 	
-	var _table_data:[Arrivals]?
+	var transportData:[Transport]?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,19 +28,29 @@ class TimetableTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
 			
-			//MARK: Begin REST Request
-			RequestData().BeginRequest() { (json_result) -> Void in
-				//Swift async call
-				DispatchQueue.main.async() {
-					//parse JSON result
-					let address  = TimetableData.init(json: json_result!)?.arrivals
-					//self._table_data = TimetableData.init(json: json_result!)?.stationAddress
-					self.tableView.reloadData()
-				}
-			}
+				self.dataRequest(type: TransportType.ARRIVAL.rawValue)
 			
+			// Register cell classes
+			tableView.register(UINib(nibName: "TransportTableViewCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
     }
 
+	func dataRequest( type : Int){
+		
+		//MARK: Begin REST Request
+		RequestData().BeginRequest() { (json_result) -> Void in
+			//Swift async call
+			DispatchQueue.main.async() {
+				//parse JSON result
+				if(type == TransportType.ARRIVAL.rawValue){
+					self.transportData = TimetableArrivals.init(json: json_result!)?.arrivals
+				} else {
+					self.transportData = TimetableDepartures.init(json: json_result!)?.departures
+			  }
+				self.tableView.reloadData()
+			}
+		}
+		
+	}
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -42,24 +59,29 @@ class TimetableTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+			return  self.transportData?.count ?? 0
     }
 
-    /*
+	
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+			let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TransportTableViewCell
+			
+			let transport  = self.transportData![indexPath.row] as Transport
+			
+			cell.directionLabel.text = transport.direction
+			cell.routeLabel.text = transport.throughStations
+			
+			if let dt = transport.dateTime?.timestamp {
+				let timestamp = DateFormatter.localizedString(from: NSDate.init(timeIntervalSinceReferenceDate: dt) as Date, dateStyle: .medium, timeStyle: .medium)
+				
+				cell.timeLabel.text = String(timestamp)
+			}
+			return cell
     }
-    */
 
     /*
     // Override to support conditional editing of the table view.

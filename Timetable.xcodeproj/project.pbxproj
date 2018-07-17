@@ -22,6 +22,8 @@
 		A9F913EB20FE6774005D24EF /* TimetableTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F913E920FE6774005D24EF /* TimetableTableViewController.xib */; };
 		A9F913EE20FE6D98005D24EF /* timetable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F913ED20FE6D98005D24EF /* timetable.swift */; };
 		A9F913EF20FE6DA4005D24EF /* timetable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F913ED20FE6D98005D24EF /* timetable.swift */; };
+		A9F913F220FE8C8F005D24EF /* TransportTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F913F020FE8C8F005D24EF /* TransportTableViewCell.swift */; };
+		A9F913F320FE8C8F005D24EF /* TransportTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9F913F120FE8C8F005D24EF /* TransportTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,8 @@
 		A9F913E820FE6774005D24EF /* TimetableTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableTableViewController.swift; sourceTree = "<group>"; };
 		A9F913E920FE6774005D24EF /* TimetableTableViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TimetableTableViewController.xib; sourceTree = "<group>"; };
 		A9F913ED20FE6D98005D24EF /* timetable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = timetable.swift; sourceTree = "<group>"; };
+		A9F913F020FE8C8F005D24EF /* TransportTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportTableViewCell.swift; sourceTree = "<group>"; };
+		A9F913F120FE8C8F005D24EF /* TransportTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TransportTableViewCell.xib; sourceTree = "<group>"; };
 		CD0FE6966261272B35D75687 /* Pods-Timetable.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timetable.release.xcconfig"; path = "Pods/Target Support Files/Pods-Timetable/Pods-Timetable.release.xcconfig"; sourceTree = "<group>"; };
 		E78A456F5384DDBF9EA48B36 /* Pods-Timetable.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timetable.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Timetable/Pods-Timetable.debug.xcconfig"; sourceTree = "<group>"; };
 		EDEABAF5798E458453CD3B02 /* Pods-TimetableTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimetableTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TimetableTests/Pods-TimetableTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -166,6 +170,8 @@
 		A9F913E320FE6014005D24EF /* View */ = {
 			isa = PBXGroup;
 			children = (
+				A9F913F020FE8C8F005D24EF /* TransportTableViewCell.swift */,
+				A9F913F120FE8C8F005D24EF /* TransportTableViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -330,6 +336,7 @@
 				A9F913BC20FE5FE2005D24EF /* Assets.xcassets in Resources */,
 				A9F913EB20FE6774005D24EF /* TimetableTableViewController.xib in Resources */,
 				A9F913BA20FE5FE0005D24EF /* Main.storyboard in Resources */,
+				A9F913F320FE8C8F005D24EF /* TransportTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,6 +437,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9F913B720FE5FE0005D24EF /* ViewController.swift in Sources */,
+				A9F913F220FE8C8F005D24EF /* TransportTableViewCell.swift in Sources */,
 				A9F913E720FE6597005D24EF /* Request.swift in Sources */,
 				A9F913B520FE5FE0005D24EF /* AppDelegate.swift in Sources */,
 				A9F913EA20FE6774005D24EF /* TimetableTableViewController.swift in Sources */,

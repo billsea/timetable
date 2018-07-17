@@ -10,7 +10,7 @@ import Foundation
 import Gloss
 
 struct DateAndTime : JSONDecodable {
-	let timestamp : Date?
+	let timestamp : Double?
 	let tz : String?
 	
 	init?(json: JSON) {
@@ -27,34 +27,44 @@ struct Route : JSONDecodable {
 	}
 }
 
-struct Arrivals : JSONDecodable {
+struct Transport : JSONDecodable {
 	let route:[Route]?
 	let direction : String?
 	let lineCode : String?
 	let dateTime : DateAndTime?
+	let throughStations : String?
 
 	init?(json: JSON) {
 		self.direction = "line_direction" <~~ json
 		self.lineCode = "line_code" <~~ json
 		self.dateTime = "datetime" <~~ json
+		self.throughStations = "through_the_stations" <~~ json
 		
 		guard let list_values = [Route].from(jsonArray: ("route" <~~ json)!) else {
-			// handle decoding failure here
 			return nil
 		}
 		self.route = list_values
 	}
 }
 
-struct TimetableData: JSONDecodable {
-	let arrivals: [Arrivals]?
+struct TimetableArrivals: JSONDecodable {
+	let arrivals: [Transport]?
 	
 	init?(json: JSON) {
-		//self.arrivals = "timetable.arrivals" <~~ json
-		guard let list_values = [Arrivals].from(jsonArray: ("timetable.arrivals" <~~ json)!) else {
-			// handle decoding failure here
+		guard let list_values = [Transport].from(jsonArray: ("timetable.arrivals" <~~ json)!) else {
 			return nil
 		}
 		self.arrivals = list_values
+	}
+}
+
+struct TimetableDepartures: JSONDecodable {
+	let departures: [Transport]?
+	
+	init?(json: JSON) {
+		guard let list_values = [Transport].from(jsonArray: ("timetable.departures" <~~ json)!) else {
+			return nil
+		}
+		self.departures = list_values
 	}
 }

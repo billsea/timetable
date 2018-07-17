@@ -9,7 +9,9 @@
 import UIKit
 
 class TimetableTableViewController: UITableViewController {
-        
+	
+	var _table_data:[Arrivals]?
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -18,6 +20,18 @@ class TimetableTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+			
+			//MARK: Begin REST Request
+			RequestData().BeginRequest() { (json_result) -> Void in
+				//Swift async call
+				DispatchQueue.main.async() {
+					//parse JSON result
+					let address  = TimetableData.init(json: json_result!)?.arrivals
+					//self._table_data = TimetableData.init(json: json_result!)?.stationAddress
+					self.tableView.reloadData()
+				}
+			}
+			
     }
 
     override func didReceiveMemoryWarning() {

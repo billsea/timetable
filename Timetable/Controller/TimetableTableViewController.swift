@@ -19,6 +19,7 @@ class TimetableTableViewController: UITableViewController {
 	
 	var transportData:[Transport]?
 	var topButton : UIBarButtonItem?
+	var dateLabel : UILabel?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +30,8 @@ class TimetableTableViewController: UITableViewController {
 			
 			self.navigationItem.rightBarButtonItem = topButton
 			
+			dateLabel = UILabel(frame: CGRect(x: 10, y: 5, width: 200, height: 41))
+			dateLabel?.text = "Date:"
 			
 			self.dataRequest(type: TransportType.ARRIVAL.rawValue)
 			
@@ -44,8 +47,6 @@ class TimetableTableViewController: UITableViewController {
 		} else {
 			self.dataRequest(type: TransportType.ARRIVAL.rawValue)
 		}
-		
-		
 	}
 	
 	func dataRequest( type : Int){
@@ -75,7 +76,6 @@ class TimetableTableViewController: UITableViewController {
     }
 
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -94,15 +94,27 @@ class TimetableTableViewController: UITableViewController {
 			cell.routeLabel.text = transport.throughStations
 			
 			if let dt = transport.dateTime?.timestamp {
-				cell.timeLabel.text = formatDate(inDate: dt)
+				cell.timeLabel.text = formatDate(inDate: dt, format: "HH:mm")
+				self.dateLabel?.text = "Date: " + formatDate(inDate: dt, format: "MM-DD-YYYY") + String(indexPath.row)
 			}
 			return cell
     }
 	
-	func formatDate(inDate : Double) -> String {
-		let formatter = DateFormatter()
-		formatter.dateFormat = "HH:mm"
-		return formatter.string(from: NSDate.init(timeIntervalSinceReferenceDate: inDate) as Date)
-	}
+		override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
+			return 50
+		}
+	
+		override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+			let vw = UIView()
+			vw.backgroundColor = UIColor.lightGray
+			vw.addSubview(dateLabel!)
+			return vw
+		}
+	
+	func formatDate(inDate : Double, format : String) -> String {
+			let formatter = DateFormatter()
+			formatter.dateFormat = format
+			return formatter.string(from: NSDate.init(timeIntervalSinceReferenceDate: inDate) as Date)
+		}
     
 }

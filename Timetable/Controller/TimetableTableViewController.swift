@@ -18,22 +18,36 @@ enum TransportType : Int {
 class TimetableTableViewController: UITableViewController {
 	
 	var transportData:[Transport]?
+	var topButton : UIBarButtonItem?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
 			
-				self.dataRequest(type: TransportType.ARRIVAL.rawValue)
+			self.title = "Arrivals"
+			
+			topButton = UIBarButtonItem(title: "Depart", style: .done, target: self, action: #selector(rightButtonAction))
+			
+			self.navigationItem.rightBarButtonItem = topButton
+			
+			
+			self.dataRequest(type: TransportType.ARRIVAL.rawValue)
 			
 			// Register cell classes
 			tableView.register(UINib(nibName: "TransportTableViewCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
     }
 
+	@objc func rightButtonAction(sender: AnyObject) {
+		let snd = sender as! UIBarButtonItem
+		
+		if(snd.title == "Depart"){
+			self.dataRequest(type: TransportType.DEPARTURE.rawValue)
+		} else {
+			self.dataRequest(type: TransportType.ARRIVAL.rawValue)
+		}
+		
+		
+	}
+	
 	func dataRequest( type : Int){
 		
 		//MARK: Begin REST Request
@@ -43,8 +57,12 @@ class TimetableTableViewController: UITableViewController {
 				//parse JSON result
 				if(type == TransportType.ARRIVAL.rawValue){
 					self.transportData = TimetableArrivals.init(json: json_result!)?.arrivals
+					self.title = "Arrivals"
+					self.topButton?.title = "Depart"
 				} else {
 					self.transportData = TimetableDepartures.init(json: json_result!)?.departures
+					self.title = "Departures"
+					self.topButton?.title = "Arrive"
 			  }
 				self.tableView.reloadData()
 			}
@@ -76,56 +94,15 @@ class TimetableTableViewController: UITableViewController {
 			cell.routeLabel.text = transport.throughStations
 			
 			if let dt = transport.dateTime?.timestamp {
-				let timestamp = DateFormatter.localizedString(from: NSDate.init(timeIntervalSinceReferenceDate: dt) as Date, dateStyle: .medium, timeStyle: .medium)
-				
-				cell.timeLabel.text = String(timestamp)
+				cell.timeLabel.text = formatDate(inDate: dt)
 			}
 			return cell
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+	
+	func formatDate(inDate : Double) -> String {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "HH:mm"
+		return formatter.string(from: NSDate.init(timeIntervalSinceReferenceDate: inDate) as Date)
+	}
     
 }

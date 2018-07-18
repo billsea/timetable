@@ -21,6 +21,7 @@ class TimetableTableViewController: UITableViewController {
 	var topButton : UIBarButtonItem?
 	var dateSections = Array<Any>()
 	var dateSectionDates = [String]()
+	var alertController : UIAlertController!
 	
 	override func viewDidLoad() {
 			super.viewDidLoad()
@@ -48,6 +49,7 @@ class TimetableTableViewController: UITableViewController {
 	}
 	
 	func dataRequest( type : Int){
+		self.showProgressAlert()
 		
 		//MARK: Begin REST Request
 		RequestData().BeginRequest() { (json_result) -> Void in
@@ -65,6 +67,7 @@ class TimetableTableViewController: UITableViewController {
 			  }
 				self.loadDateSections()
 				self.tableView.reloadData()
+				self.alertController.dismiss(animated: true, completion: nil);
 			}
 		}
 	}
@@ -95,8 +98,19 @@ class TimetableTableViewController: UITableViewController {
 		dateSections.append(group)
 	}
 	
-	func getSectionData(idx : Int) {
+	func showProgressAlert() {
+		alertController = UIAlertController(title: nil, message: "Loading...\n\n", preferredStyle: .alert)
+		alertController.view.backgroundColor = UIColor.clear
 		
+		let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+		
+		let spinX = (alertController.view.frame.size.width/2) - (spinnerIndicator.frame.size.width/2)
+		spinnerIndicator.center = CGPoint(x: spinX-50, y: 65.5)
+		spinnerIndicator.color = UIColor.black
+		spinnerIndicator.startAnimating()
+		
+		alertController.view.addSubview(spinnerIndicator)
+		self.present(alertController, animated: false, completion: nil)
 	}
 	
 	override func didReceiveMemoryWarning() {

@@ -19,25 +19,23 @@ class TimetableTableViewController: UITableViewController {
 	
 	var transportData:[Transport]?
 	var topButton : UIBarButtonItem?
-	var dateLabel : UILabel?
+	var dateSections = Array<Any>()
+	var dateSectionDates = [String]()
 	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-			
-			self.title = "Arrivals"
-			
-			topButton = UIBarButtonItem(title: "Depart", style: .done, target: self, action: #selector(rightButtonAction))
-			
-			self.navigationItem.rightBarButtonItem = topButton
-			
-			dateLabel = UILabel(frame: CGRect(x: 10, y: 5, width: 200, height: 41))
-			dateLabel?.text = "Date:"
-			
-			self.dataRequest(type: TransportType.ARRIVAL.rawValue)
-			
-			// Register cell classes
-			tableView.register(UINib(nibName: "TransportTableViewCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
-    }
+	override func viewDidLoad() {
+			super.viewDidLoad()
+		
+		self.title = "Arrivals"
+		
+		topButton = UIBarButtonItem(title: "Depart", style: .done, target: self, action: #selector(rightButtonAction))
+		
+		self.navigationItem.rightBarButtonItem = topButton
+		
+		self.dataRequest(type: TransportType.ARRIVAL.rawValue)
+		
+		// Register cell classes
+		tableView.register(UINib(nibName: "TransportTableViewCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
+	}
 
 	@objc func rightButtonAction(sender: AnyObject) {
 		let snd = sender as! UIBarButtonItem
@@ -65,56 +63,89 @@ class TimetableTableViewController: UITableViewController {
 					self.title = "Departures"
 					self.topButton?.title = "Arrive"
 			  }
+				self.loadDateSections()
 				self.tableView.reloadData()
 			}
 		}
+	}
+	
+	func loadDateSections(){
+		dateSections.removeAll()
+		var lastdate : String?
+		var group = [Transport]()
+		
+		for var t in self.transportData! {
+			let curdate = formatDate(inDate: (t.dateTime?.timestamp)!, format: "dd-MM-YY",timezone: (t.dateTime?.tz)!)
+			if(lastdate == nil){
+				group.append(t)
+				lastdate = curdate
+				dateSectionDates.append(curdate)
+			} else if (curdate == lastdate){
+				//add to existing group
+				group.append(t)
+				lastdate = curdate
+			} else if (curdate != lastdate){
+				//start new group
+				dateSections.append(group)
+				group.removeAll()
+				lastdate = curdate
+				dateSectionDates.append(curdate)
+			}
+		}
+		dateSections.append(group)
+	}
+	
+	func getSectionData(idx : Int) {
 		
 	}
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+	
+	override func didReceiveMemoryWarning() {
+			super.didReceiveMemoryWarning()
+			// Dispose of any resources that can be recreated.
+	}
 
-    // MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
+	// MARK: - Table view data source
+	override func numberOfSections(in tableView: UITableView) -> Int {
+			return dateSections.count
+	}
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-			return  self.transportData?.count ?? 0
-    }
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		let transportSection  = self.dateSections[section] as! [Transport]
+		return  transportSection.count
+	}
 
+
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TransportTableViewCell
+		
+		let transportSection  = self.dateSections[indexPath.section] as! [Transport]
+		let transport  = transportSection[indexPath.row]
 	
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-			let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TransportTableViewCell
-			
-			let transport  = self.transportData![indexPath.row] as Transport
-			
-			cell.directionLabel.text = transport.direction
-			cell.routeLabel.text = transport.throughStations
-			
-			if let dt = transport.dateTime?.timestamp {
-				cell.timeLabel.text = formatDate(inDate: dt, format: "HH:mm")
-				self.dateLabel?.text = "Date: " + formatDate(inDate: dt, format: "MM-DD-YYYY") + String(indexPath.row)
-			}
-			return cell
-    }
-	
-		override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
-			return 50
+		cell.directionLabel.text = transport.direction
+		cell.routeLabel.text = transport.throughStations
+
+		if let dt = transport.dateTime?.timestamp {
+			cell.timeLabel.text = formatDate(inDate: dt, format: "HH:mm", timezone: (transport.dateTime?.tz)!)
 		}
+		return cell
+	}
+
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat{
+		return 50
+	}
+
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		return self.dateSectionDates[section]
+	}
 	
-		override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-			let vw = UIView()
-			vw.backgroundColor = UIColor.lightGray
-			vw.addSubview(dateLabel!)
-			return vw
+	func formatDate(inDate : Double, format : String, timezone : String) -> String {
+			let date = Date(timeIntervalSince1970: inDate)
+			let dateFormatter = DateFormatter()
+			dateFormatter.timeZone = TimeZone(abbreviation: timezone)
+			dateFormatter.locale = NSLocale.current
+			dateFormatter.dateFormat = format
+			return dateFormatter.string(from: date)
 		}
-	
-	func formatDate(inDate : Double, format : String) -> String {
-			let formatter = DateFormatter()
-			formatter.dateFormat = format
-			return formatter.string(from: NSDate.init(timeIntervalSinceReferenceDate: inDate) as Date)
-		}
+
     
 }

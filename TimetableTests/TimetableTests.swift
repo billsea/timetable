@@ -20,11 +20,14 @@ class TimetableTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
+	
+		func testRequest() {
+				RequestData().BeginRequest() { (json_result) -> Void in
+					DispatchQueue.main.async() {
+						XCTAssert((json_result != nil))
+				}
+			}
+		}
     
     func testPerformanceExample() {
         // This is an example of a performance test case.

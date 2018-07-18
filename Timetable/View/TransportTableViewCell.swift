@@ -14,7 +14,6 @@ class TransportTableViewCell: UITableViewCell {
 	@IBOutlet weak var directionLabel: UILabel!
 	@IBOutlet weak var routeLabel: UILabel!
 	
-	
 	override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -10,7 +10,7 @@ import Foundation
 
 class RequestData {
 	//request timetable data and return value with handler(dictionary)
-	func BeginRequest(handler: @escaping (_ weather_data: Dictionary<String, AnyObject>?) -> Void) -> Void {
+	func BeginRequest(handler: @escaping (_ transport_data: Dictionary<String, AnyObject>?) -> Void) -> Void {
 		var request = URLRequest(url: URL(string: "http://api.mobile.staging.mfb.io/mobile/v1/network/station/1/timetable")!)
 		request.httpMethod = "GET"
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")

@@ -19,10 +19,8 @@ class RequestData {
 		
 		let urlSession = URLSession.shared
 		let dataTask = urlSession.dataTask(with: request, completionHandler: { data, response, error -> Void in
-			print(response!)
 			do {
 				let json = try JSONSerialization.jsonObject(with: data!) as! Dictionary<String, AnyObject>
-				print(json)
 				handler(json)//return result
 			} catch {
 				print("error")

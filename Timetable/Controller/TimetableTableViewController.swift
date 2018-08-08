@@ -56,12 +56,15 @@ class TimetableTableViewController: UITableViewController {
 			//Swift async call
 			DispatchQueue.main.async() {
 				//parse JSON result
+				guard let json_result = json_result else {
+					return
+				}
 				if(type == TransportType.ARRIVAL.rawValue){
-					self.transportData = TimetableArrivals.init(json: json_result!)?.arrivals
+					self.transportData = TimetableArrivals.init(json: json_result)?.arrivals
 					self.title = "Arrivals"
 					self.topButton?.title = "Depart"
 				} else {
-					self.transportData = TimetableDepartures.init(json: json_result!)?.departures
+					self.transportData = TimetableDepartures.init(json: json_result)?.departures
 					self.title = "Departures"
 					self.topButton?.title = "Arrive"
 			  }
@@ -77,7 +80,11 @@ class TimetableTableViewController: UITableViewController {
 		var lastdate : String?
 		var group = [Transport]()
 		
-		for var t in self.transportData! {
+		guard let transportData = self.transportData else {
+			return
+		}
+		
+		for var t in transportData {
 			let curdate = formatDate(inDate: (t.dateTime?.timestamp)!, format: "dd-MM-YY",timezone: (t.dateTime?.tz)!)
 			if(lastdate == nil){
 				group.append(t)

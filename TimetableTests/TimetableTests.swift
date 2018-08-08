@@ -10,7 +10,9 @@ import XCTest
 @testable import Timetable
 
 class TimetableTests: XCTestCase {
-    
+	
+	let timetable = TimetableTableViewController()
+	
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -22,9 +24,27 @@ class TimetableTests: XCTestCase {
     }
 	
 		func testRequest() {
-				RequestData().BeginRequest() { (json_result) -> Void in
-					DispatchQueue.main.async() {
-						XCTAssert((json_result != nil))
+			timetable.dataRequest(type: 0)
+			timetable.loadDateSections()
+		}
+	
+		func testRestRequest(){
+			let type  = 0
+			
+			RequestData().BeginRequest() { (json_result) -> Void in
+				//Swift async call
+				DispatchQueue.main.async() {
+					//parse JSON result
+					guard let json_result = json_result else {
+						return
+					}
+					if(type == TransportType.ARRIVAL.rawValue){
+						let arrivalData = TimetableArrivals.init(json: json_result)?.arrivals
+						XCTAssert(arrivalData != nil)
+					} else {
+						let departureData = TimetableDepartures.init(json: json_result)?.departures
+						XCTAssert(departureData != nil)
+					}
 				}
 			}
 		}

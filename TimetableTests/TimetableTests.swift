@@ -24,6 +24,7 @@ class TimetableTests: XCTestCase {
     }
 	
 		func testRequest() {
+			//TODO - all tests should have the potential to succeed or fail
 			timetable.dataRequest(type: 0)
 			timetable.loadDateSections()
 		}
